@@ -1,0 +1,41 @@
+/* Tokens de design: altere aqui para mudar cores, fontes e espaçamentos do site inteiro. */
+:root {
+  /* Paleta */
+  --noite: #0d1220; /* base da página */
+  --marinho: #15224a; /* chão da seção de projetos */
+  --marinho-claro: #1d2d5e; /* superfícies sobre o marinho */
+  --cobalto: #4c7dff; /* links, botão principal, identidade */
+  --cobalto-claro: #86a6ff; /* texto em cobalto sobre fundos escuros */
+  --sodio: #ffb23e; /* destaque raro: cursor, foco, projetos em andamento */
+  --giz: #e8ebf2; /* texto principal */
+  --giz-suave: #c3c9d6; /* texto de leitura em superfícies azuis */
+  --nevoa: #8e98ae; /* texto secundário */
+  --linha: #26314f; /* bordas e divisórias */
+  --linha-marinho: #2b3d74;
+
+  /* Tipografia */
+  --font-display: 'Bricolage Grotesque Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Atkinson Hyperlegible Next Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-code: 'JetBrains Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+
+  --fs-xs: 0.8125rem;
+  --fs-sm: 0.9375rem;
+  --fs-base: 1.0625rem;
+  --fs-md: 1.25rem;
+  --fs-lg: 1.625rem;
+  --fs-xl: clamp(2.25rem, 1.6rem + 3vw, 3.5rem);
+  --fs-hero: clamp(4.25rem, 2rem + 11vw, 9.5rem);
+
+  --lh-body: 1.65;
+  --measure: 66ch;
+
+  /* Espaço e forma */
+  --gutter: clamp(16px, 4vw, 40px);
+  --container: 1160px;
+  --section-space: clamp(4.5rem, 3rem + 6vw, 8.5rem);
+  --radius-sm: 6px;
+  --radius: 10px;
+
+  --header-h: 64px;
+  color-scheme: dark;
+}
