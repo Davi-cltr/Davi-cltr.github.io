@@ -14,7 +14,7 @@ A paleta lembra uma cidade à noite sob luz de sódio, e o site inteiro gira em 
 
 Toda animação respeita a opção de reduzir movimento do sistema, tudo funciona por teclado, e o conteúdo aparece mesmo sem JavaScript de animação.
 
-Endereço depois de publicado: **https://davi-cltr.github.io**
+Publicado no Netlify (veja "Publicar no Netlify").
 
 ## Como rodar no seu computador
 
@@ -112,30 +112,22 @@ A textura da abertura (`src/data/heroCode.js`) é uma lista de linhas reais dos 
 
 - O site abre no idioma do navegador da pessoa (português para quem usa português, inglês para os demais).
 - A escolha feita no seletor fica salva para as próximas visitas.
-- Dá para mandar o link já no idioma certo: `https://davi-cltr.github.io/?lang=en`.
+- Dá para mandar o link já no idioma certo, acrescentando `?lang=en` ao endereço.
 
-## Publicar no GitHub Pages
+## Publicar no Netlify
 
-1. Crie um repositório público chamado **`Davi-cltr.github.io`** (exatamente assim, com o seu usuário). Com esse nome, o site fica em `https://davi-cltr.github.io`.
-2. Envie o código:
-   ```bash
-   git init
-   git add .
-   git commit -m "Primeira versão do portfólio"
-   git branch -M main
-   git remote add origin https://github.com/Davi-cltr/Davi-cltr.github.io.git
-   git push -u origin main
-   ```
-3. No repositório, vá em **Settings → Pages** e, em **Source**, escolha **GitHub Actions**.
-4. Acompanhe a aba **Actions**. Quando o workflow "Deploy no GitHub Pages" terminar com sucesso, o site estará no ar.
+O código fica no GitHub e o site é publicado pelo Netlify. A configuração já está em `netlify.toml`: comando `npm run build`, pasta `dist` e Node 22.
 
-Depois disso, cada `git push` na `main` publica uma versão nova automaticamente.
+**Primeira vez:**
 
-**Usando outro nome de repositório** (por exemplo `portfolio`): o workflow detecta isso e publica em `https://davi-cltr.github.io/portfolio/`. Nesse caso, atualize também os endereços em `index.html` (canonical, `og:url` e `og:image`).
+1. Entre em [app.netlify.com](https://app.netlify.com) com a sua conta do GitHub.
+2. Clique em **Add new site → Import an existing project → GitHub** e escolha o repositório **Davi-cltr.github.io**.
+3. O Netlify lê o `netlify.toml` sozinho. Confira se aparece **Build command: npm run build** e **Publish directory: dist**, e clique em **Deploy**.
+4. Para escolher o endereço, vá em **Site configuration → Change site name** (por exemplo, `davimotta` vira `https://davimotta.netlify.app`).
 
-### Por que GitHub Pages
+Depois disso, cada `git push` na branch `main` publica uma versão nova automaticamente.
 
-O site é estático: não tem banco de dados nem servidor, e o contato é feito por e-mail. O GitHub Pages é gratuito, fica no mesmo lugar do código e publica sozinho a cada push. A Vercel também funcionaria (importe o repositório e ela detecta o Vite), mas só faria diferença se o site passasse a precisar de funções de servidor, como um formulário de contato próprio.
+O endereço do site entra sozinho nas metatags (link canônico e imagem de compartilhamento), pela variável `URL` que o Netlify fornece durante o build. Se você ligar um domínio próprio, ele passa a ser usado automaticamente.
 
 ## Acessibilidade e desempenho
 
