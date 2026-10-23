@@ -1,0 +1,176 @@
+/* ---------- Contato: a luz volta no fim ---------- */
+.contact {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-bottom: clamp(6rem, 4rem + 8vw, 12rem);
+}
+
+.contact__horizon {
+  position: absolute;
+  inset: auto -10% -18% -10%;
+  height: 75%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(45% 55% at 50% 100%, rgb(var(--sodio-rgb) / 0.3), transparent 70%),
+    radial-gradient(85% 60% at 50% 100%, rgb(var(--cobalto-rgb) / 0.16), transparent 70%);
+}
+
+.contact__horizon::before {
+  content: '';
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  top: 76%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(var(--sodio-rgb) / 0.7), transparent);
+  box-shadow: 0 0 24px rgb(var(--sodio-rgb) / 0.6);
+}
+
+.contact__title {
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  font-variation-settings: 'wdth' 82;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+}
+
+.contact__text {
+  max-width: 52ch;
+  margin-top: 1.5rem;
+  color: var(--giz-suave);
+  font-size: var(--fs-md);
+  line-height: 1.5;
+}
+
+.contact__email {
+  position: relative;
+  display: inline-block;
+  margin-top: clamp(2.5rem, 2rem + 3vw, 4.5rem);
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 0.6rem + 5.2vw, 5.25rem);
+  font-weight: var(--fw-semibold);
+  font-variation-settings: 'wdth' 80;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  padding-block: 6px;
+  color: var(--giz);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.contact__email::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--cobalto);
+  transform-origin: 0 50%;
+  transition: background-color var(--dur) ease, box-shadow var(--dur) ease;
+}
+
+.contact__at {
+  color: var(--nevoa);
+  transition: color var(--dur) ease;
+}
+
+@media (hover: hover) {
+  .contact__email:hover {
+    color: var(--giz);
+  }
+
+  .contact__email:hover::after {
+    background: var(--sodio);
+    box-shadow: 0 0 20px rgb(var(--sodio-rgb) / 0.8);
+  }
+
+  .contact__email:hover .contact__at {
+    color: var(--sodio-claro);
+  }
+}
+
+.contact__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 2.5rem;
+}
+
+.button.is-done {
+  box-shadow: inset 0 0 0 1px rgb(var(--sodio-rgb) / 0.7);
+  color: var(--sodio-claro);
+}
+
+.copy-icon {
+  position: relative;
+  display: inline-grid;
+  width: 16px;
+  height: 16px;
+}
+
+.copy-icon svg {
+  grid-area: 1 / 1;
+  transition:
+    opacity 200ms var(--ease-out),
+    scale 200ms var(--ease-out),
+    filter 200ms var(--ease-out);
+}
+
+.copy-icon__check {
+  opacity: 0;
+  scale: 0.5;
+  filter: blur(2px);
+}
+
+.copy-icon.is-done .copy-icon__copy {
+  opacity: 0;
+  scale: 0.5;
+  filter: blur(2px);
+}
+
+.copy-icon.is-done .copy-icon__check {
+  opacity: 1;
+  scale: 1;
+  filter: blur(0);
+}
+
+.contact__feedback {
+  min-height: 1.65em;
+  margin-top: 12px;
+  font-size: var(--fs-sm);
+  color: var(--sodio);
+}
+
+.contact__profiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 40px;
+  list-style: none;
+  padding: 0;
+  margin-top: 2.5rem;
+}
+
+.contact__profiles a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-size: var(--fs-md);
+  color: var(--giz);
+  text-decoration: none;
+}
+
+.contact__handle {
+  font-size: var(--fs-sm);
+  color: var(--nevoa);
+  transition: color var(--dur-fast) ease;
+}
+
+@media (hover: hover) {
+  .contact__profiles a:hover .contact__handle {
+    color: var(--sodio-claro);
+  }
+}

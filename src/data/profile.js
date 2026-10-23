@@ -49,6 +49,20 @@ export const profile = {
     ],
   },
 
+  // Frase de destaque da seção Sobre (tirada do próprio texto acima).
+  statement: {
+    pt: 'Aprendo melhor fazendo. Cada projeto é uma chance de entender um problema real a fundo.',
+    en: 'I learn best by building. Every project is a chance to understand a real problem in depth.',
+  },
+
+  // Ficha rápida ao lado do texto da seção Sobre.
+  facts: [
+    { label: { pt: 'Hoje', en: 'Now' }, value: { pt: 'Desenvolvedor júnior na EMotta Sistemas', en: 'Junior developer at EMotta Sistemas' } },
+    { label: { pt: 'Estudo', en: 'Studying' }, value: { pt: 'Técnico em Desenvolvimento de Sistemas, ETEC', en: 'Systems Development technical program, ETEC' } },
+    { label: { pt: 'Construo com', en: 'Building with' }, value: { pt: 'React, Ruby on Rails e Python', en: 'React, Ruby on Rails and Python' } },
+    { label: { pt: 'Base', en: 'Based in' }, value: { pt: 'Brasil', en: 'Brazil' } },
+  ],
+
   goals: {
     pt: 'Quero continuar evoluindo como desenvolvedor, trabalhar em equipe e participar da criação de produtos digitais úteis, eficientes e bem estruturados.',
     en: 'I want to keep growing as a developer, work with teams, and help build digital products that are useful, efficient and well structured.',

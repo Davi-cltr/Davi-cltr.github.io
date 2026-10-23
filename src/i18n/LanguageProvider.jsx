@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { strings } from './strings.js'
 
 export const LANGUAGES = ['pt', 'en']
@@ -28,7 +29,14 @@ export function LanguageProvider({ children }) {
 
   const setLang = useCallback((next) => {
     if (!LANGUAGES.includes(next)) return
-    setLangState(next)
+    // Troca com um fade cruzado quando o navegador suporta View Transitions
+    // e a pessoa não pediu menos movimento; senão, troca direto.
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (document.startViewTransition && !calm) {
+      document.startViewTransition(() => flushSync(() => setLangState(next)))
+    } else {
+      setLangState(next)
+    }
     try {
       window.localStorage.setItem(STORAGE_KEY, next)
     } catch {

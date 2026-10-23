@@ -2,6 +2,18 @@
 
 Site pessoal bilíngue (português e inglês) feito com React e Vite. Apresenta meus projetos como estudos de caso, com capturas de tela reais, trechos do código e as decisões técnicas por trás de cada um.
 
+## O conceito: luz de sódio
+
+A paleta lembra uma cidade à noite sob luz de sódio, e o site inteiro gira em torno de uma ideia: **a luz revela o código**.
+
+- **Abertura:** por trás do nome há linhas reais do StudentOS e do Conferente, quase invisíveis. Uma luz âmbar nasce no cursor do título, acompanha o mouse e revela o código por onde passa. No celular, ela passeia sozinha.
+- **Habilidades:** um mapa de evidências. Cada tecnologia está ligada por fios ao trabalho ou projeto que comprova o uso, e escolher uma acende o caminho.
+- **Projetos:** capítulos com moldura de navegador, em que as abas são as capturas de tela. Em "Decisões técnicas", escolher uma decisão acende as linhas exatas do código real que a implementam.
+- **Trajetória:** trabalho e estudo na mesma linha do tempo, com a marca de "hoje" acesa e o futuro tracejado.
+- **Contato:** a luz volta como um horizonte no fim da página.
+
+Toda animação respeita a opção de reduzir movimento do sistema, tudo funciona por teclado, e o conteúdo aparece mesmo sem JavaScript de animação.
+
 Endereço depois de publicado: **https://davi-cltr.github.io**
 
 ## Como rodar no seu computador
@@ -20,22 +32,25 @@ npm run preview  # mostra a versão final em http://localhost:4173
 ```
 src/
   data/
-    profile.js     nome, apresentação, foto, currículo e contatos
-    projects.js    projetos (estudos de caso)
-    career.js      experiência, formação e certificados
-    skills.js      habilidades e áreas de interesse
+    profile.js     nome, apresentação, frase de destaque, ficha, foto, currículo e contatos
+    projects.js    projetos (estudos de caso) e os trechos de código das decisões técnicas
+    career.js      linha do tempo de trabalho e estudo, e certificados
+    skills.js      mapa de evidências: tecnologias e onde cada uma foi usada
+    heroCode.js    linhas reais de código usadas como textura da abertura
   i18n/
     strings.js     textos fixos da interface (menus, botões, títulos)
     LanguageProvider.jsx   troca de idioma
-  components/      uma seção do site por arquivo
+  components/      uma seção do site por arquivo (Hero, About, Skills, Projects, Journey, Contact)
+  lib/motion.js    revelação ao rolar, seção ativa e preferências de movimento
   styles/
-    tokens.css     cores, fontes e espaçamentos (mude aqui para alterar o visual inteiro)
-    base.css       estilos gerais e botões
-    sections.css   estilos de cada seção
+    tokens.css     cores, fontes, espaços e curvas de movimento (mude aqui para alterar o visual inteiro)
+    base.css       estilos gerais, botões e revelação
+    chrome.css     cabeçalho, menu, barra de progresso e rodapé
+    hero.css, about.css, skills.css, projects.css, journey.css, contact.css
 public/
   images/projects/ capturas de tela dos projetos
   cv/              coloque aqui o currículo em PDF
-  og-image.png     imagem que aparece quando o link é compartilhado
+  og-image.jpg     imagem que aparece quando o link é compartilhado
 ```
 
 Todo texto traduzido segue o formato `{ pt: '...', en: '...' }`. Ao mudar um, mude os dois.
@@ -58,11 +73,24 @@ O botão "Baixar currículo" aparece sozinho na seção de contato.
 
 ### Adicionar ou atualizar um projeto
 
-1. Em `src/data/projects.js`, copie um dos objetos e ajuste os campos. Os opcionais (`demo`, `code`, `decisions`, `nextSteps`, `learnings`, `commercial`) podem ser omitidos ou ficar `null`.
+1. Em `src/data/projects.js`, copie um dos objetos e ajuste os campos. Os opcionais (`demo`, `decisions`, `nextSteps`, `learnings`, `commercial`) podem ser omitidos ou ficar `null`.
 2. Use um destes status: `development` (em desenvolvimento), `mvp` (MVP em validação), `done` (concluído) ou `experimental`.
 3. Para as imagens, salve cada captura em duas larguras, `nome-1280.webp` e `nome-640.webp`, em `public/images/projects/`, e informe largura e altura originais no campo `images`. Um jeito rápido de gerar as duas versões é o [Squoosh](https://squoosh.app/).
 
-Use somente capturas reais do projeto.
+Use somente capturas reais do projeto. O campo `label` de cada imagem vira o nome da aba na moldura de navegador.
+
+4. Para cada decisão técnica, o campo `code` mostra um trecho real do arquivo:
+   - `file`: caminho no repositório (vira o link "Abrir arquivo no GitHub");
+   - `blocks`: trechos contínuos do arquivo, cada um com `start`, o número real da primeira linha;
+   - `highlight`: números reais das linhas que acendem quando a decisão é escolhida.
+
+### Atualizar o mapa de habilidades
+
+Em `src/data/skills.js`, cada tecnologia tem `sources`, a lista de onde ela foi usada (`emotta`, `studentos`, `conferente`). Os fios do mapa são desenhados a partir dessa lista. Para um projeto novo aparecer como fonte, adicione-o em `evidenceSources`.
+
+### Atualizar a linha do tempo
+
+Em `src/data/career.js`, cada etapa tem `start` e `end` no formato `AAAA-MM` (`end: null` significa "até hoje") e `short`, o rótulo curto que aparece dentro da barra. Etapas futuras levam `planned: true` e aparecem tracejadas. A marca "Hoje" é calculada sozinha pela data atual.
 
 ### Adicionar um certificado
 
@@ -77,6 +105,8 @@ A seção "Cursos e certificados" só aparece quando houver pelo menos um item.
 ### Mudar cores ou fontes
 
 Tudo fica em `src/styles/tokens.css`. As fontes vêm do pacote Fontsource (instaladas pelo `npm install`, sem depender do Google Fonts).
+
+A textura da abertura (`src/data/heroCode.js`) é uma lista de linhas reais dos projetos. Se quiser trocar, cole outras linhas do seu código ali.
 
 ## Idiomas
 
@@ -109,7 +139,10 @@ O site é estático: não tem banco de dados nem servidor, e o contato é feito 
 
 ## Acessibilidade e desempenho
 
-- Navegação completa por teclado, com link "Pular para o conteúdo" e foco visível.
-- Animação do cursor desligada para quem ativa "reduzir movimento" no sistema.
+- Navegação completa por teclado, com link "Pular para o conteúdo" e foco visível. Abas da galeria e das decisões técnicas funcionam com as setas.
+- Com "reduzir movimento" ativado no sistema: sem animações, a luz da abertura fica parada e todo o conteúdo já aparece visível.
+- Auditado com axe-core (WCAG 2.1 AA) em computador e celular, nos dois idiomas, sem violações.
+- Alvos de toque com pelo menos 40px no celular.
+- A abertura animada roda uma vez por sessão; ao voltar para a página, ela já aparece pronta.
 - Imagens em WebP, em dois tamanhos, carregadas só quando aparecem na tela.
 - Textos alternativos traduzidos nos dois idiomas.
