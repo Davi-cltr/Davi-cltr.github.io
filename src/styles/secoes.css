@@ -38,10 +38,10 @@
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
-  align-items: center;
-  gap: 2vw;
+}
+
+.hero__texto {
+  max-width: 1100px;
 }
 
 .hero__texto {
@@ -135,36 +135,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
-}
-
-.hero__foto {
-  position: relative;
-  justify-self: center;
-  width: min(100%, 440px);
-}
-
-.hero__foto img {
-  width: 100%;
-  height: auto;
-  max-height: 82vh;
-  object-fit: contain;
-  aspect-ratio: 1 / 2;
-}
-
-.hero__foto::before {
-  content: '';
-  position: absolute;
-  left: 10%;
-  right: 10%;
-  bottom: 8%;
-  height: 40%;
-  background: radial-gradient(ellipse at 50% 100%, rgb(var(--sodio-rgb) / 0.22), transparent 70%);
-  filter: blur(20px);
-  z-index: -1;
-}
-
-.com-gl .hero__foto img {
-  opacity: 0;
 }
 
 .hero__rolar {
@@ -268,14 +238,8 @@
   max-width: 100%;
 }
 
-.sobre__moldura img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.com-gl .sobre__moldura img {
-  opacity: 0;
+.sem-gl .sobre__retrato {
+  display: none;
 }
 
 .sobre__moldura::after {
@@ -1045,26 +1009,12 @@
 
 /* ——— telas menores */
 @media (max-width: 960px) {
-  .hero__grade {
-    grid-template-columns: 1fr;
-  }
-
-  .hero__foto {
-    position: absolute;
-    right: -6vw;
-    top: calc(var(--header-h) + 2vh);
-    width: 54vw;
-    max-width: 320px;
-    z-index: 1;
-    opacity: 0.9;
-  }
-
   .hero__nome {
     font-size: clamp(4.2rem, 22vw, 8rem);
   }
 
   .hero__texto {
-    padding-top: 30vh;
+    padding-top: 4vh;
   }
 
   .sobre__corpo {

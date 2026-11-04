@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useLanguage } from '../i18n/LanguageProvider.jsx'
 import { profile } from '../data/profile.js'
-import { asset } from '../lib/asset.js'
 import { estado, ouvir } from '../core/store.js'
 import { gsap, rolarPara } from '../core/motion.js'
 import { embaralhar, useCena, useMagnetico } from './efeitos.jsx'
@@ -64,11 +63,6 @@ export default function Hero() {
           opacity: 0,
           ease: 'none',
           scrollTrigger: { trigger: el, start: '20% top', end: 'bottom top', scrub: true },
-        })
-        gsap.to(el.querySelector('.hero__foto'), {
-          y: 80,
-          ease: 'none',
-          scrollTrigger: { trigger: el, start: 'top top', end: 'bottom top', scrub: true },
         })
       }
 
@@ -144,18 +138,6 @@ export default function Hero() {
             </a>
           </div>
         </div>
-        <figure className="hero__foto">
-          <img
-            data-gl="retrato"
-            src={asset('images/davi-1090.webp')}
-            srcSet={`${asset('images/davi-545.webp')} 545w, ${asset('images/davi-1090.webp')} 1090w`}
-            sizes="(min-width: 900px) 34vw, 70vw"
-            width="1090"
-            height="2180"
-            alt={t('photo.alt')}
-            fetchPriority="high"
-          />
-        </figure>
       </div>
       <a
         className="hero__rolar"
