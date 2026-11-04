@@ -10,7 +10,7 @@ import { asset } from '../lib/asset.js'
 import { projects } from '../data/projects.js'
 import { COR, globais, suave } from './comum.js'
 import { atlasDeCodigo, criarCampoDeCodigo } from './Codigo.js'
-import { criarRetrato, criarRetratoParticulas, sobreElemento, DISTANCIA } from './Retrato.js'
+import { criarRetratoParticulas, sobreElemento } from './Retrato.js'
 import { criarConstelacao, habilidades } from './Constelacao.js'
 import { criarEstrada, ESTRADA } from './Estrada.js'
 import { criarHorizonte, criarPoeira, criarPredios, criarRastros } from './Cidade.js'
@@ -96,7 +96,7 @@ export class Palco {
     this.redimensionar()
 
     let feitos = 0
-    const total = 4 + projects.length
+    const total = 3 + projects.length
     const passo = () => aoProgresso(++feitos / total)
 
     // fontes primeiro (o atlas de código usa a fonte mono)
@@ -111,12 +111,6 @@ export class Palco {
     this.codigo = criarCampoDeCodigo(atlas, { quantidade: alta ? 620 : 340 })
     this.cena.add(this.codigo)
     passo()
-
-    const foto = await this.carregar(asset(alta ? 'images/davi-1090.webp' : 'images/davi-545.webp'))
-    passo()
-    this.retrato = criarRetrato(foto)
-    this.retrato.visible = false
-    this.camera.add(this.retrato)
 
     const pequena = await this.carregar(asset('images/davi-545.webp'))
     const part = criarRetratoParticulas(pequena.image, { passo: alta ? 4 : 6 })
@@ -197,7 +191,7 @@ export class Palco {
   }
 
   visivelTudo(v) {
-    for (const o of [this.retrato, this.particulas, this.const.grupo, ...[...this.capturas.values()].map((c) => c.malha)]) o.visible = v
+    for (const o of [this.particulas, this.const.grupo, ...[...this.capturas.values()].map((c) => c.malha)]) o.visible = v
   }
 
   carregar(url) {
@@ -345,7 +339,7 @@ export class Palco {
     const nx = ativo ? m.x : Math.sin(t * 0.35) * 0.55
     const ny = ativo ? m.y : Math.sin(t * 0.47 + 1) * 0.35
     const luz = new THREE.Vector3(nx, ny, 0.5).unproject(this.camera).sub(this.camera.position).normalize()
-    globais.uLuz.value.copy(this.camera.position).addScaledVector(luz, DISTANCIA + 3)
+    globais.uLuz.value.copy(this.camera.position).addScaledVector(luz, 11)
     this.flash *= Math.exp(-dt * 3)
     globais.uLuzForca.value = 1 + this.flash * 1.5
 
@@ -358,20 +352,6 @@ export class Palco {
     this.rastros.material.uniforms.uVel.value = reduzido ? 0 : viajando
     this.rastros.material.uniforms.uAvanco.value = this.avanco
     this.poeira.material.uniforms.uDeslocamento.value.copy(this.camera.position)
-
-    // ——— retrato da abertura
-    const eRet = this.el('retrato', '[data-gl="retrato"]')
-    if (eRet) {
-      const { visivel, r } = sobreElemento(this.retrato, eRet, this.camera)
-      this.retrato.visible = visivel && estado.pronto
-      const u = this.retrato.material.uniforms
-      u.uRevela.value = reduzido ? 1 : Math.min(1, Math.max(0, this.revela * 1.3 - 0.15))
-      const mx = (m.px - r.left) / Math.max(1, r.width)
-      const my = 1 - (m.py - r.top) / Math.max(1, r.height)
-      u.uMouse.value.lerp(new THREE.Vector2(ativo ? mx : 0.5 + nx * 0.6, ativo ? my : 0.6 + ny * 0.4), 0.12)
-      u.uVel.value += (Math.min(1, Math.hypot(m.vx ?? 0, m.vy ?? 0) / 3000) - u.uVel.value) * 0.1
-      u.uSaida.value = reduzido ? 0 : THREE.MathUtils.clamp(-r.top / Math.max(1, r.height), 0, 1)
-    }
 
     // ——— retrato em partículas (sobre)
     const ePart = this.el('particulas', '[data-gl="particulas"]')

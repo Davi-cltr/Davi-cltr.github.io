@@ -1,8 +1,6 @@
-// Planos presos à câmera e sincronizados com um elemento do DOM: o WebGL ocupa exatamente
-// o lugar da imagem da página (que continua lá para leitores de tela e para quem não tem WebGL).
+// Objetos presos à câmera e sincronizados com um elemento do DOM, e o retrato em partículas da seção Sobre.
 import * as THREE from 'three'
-import { GLSL_RUIDO, globais, sorteio } from './comum.js'
-import { estado } from '../core/store.js'
+import { globais, sorteio } from './comum.js'
 
 export const DISTANCIA = 8
 
@@ -19,82 +17,6 @@ export function sobreElemento(obj, el, camera, { escalaAltura = true } = {}) {
   if (escalaAltura) obj.scale.set(w, h, 1)
   const visivel = r.bottom > -innerHeight * 0.15 && r.top < innerHeight * 1.05 && r.width > 0
   return { r, w, h, visivel }
-}
-
-/** o retrato da abertura: recortado, iluminado pela luz de sódio do cursor */
-export function criarRetrato(textura) {
-  const mat = new THREE.ShaderMaterial({
-    uniforms: {
-      ...globais,
-      tFoto: { value: textura },
-      uRevela: { value: 0 },
-      uMouse: { value: new THREE.Vector2(0.5, 0.5) },
-      uVel: { value: 0 },
-      uSaida: { value: 0 },
-      uTexel: { value: new THREE.Vector2(1 / 545, 1 / 1090) },
-    },
-    vertexShader: /* glsl */ `
-      varying vec2 vUv;
-      uniform float uSaida;
-      uniform float uTempo;
-      void main() {
-        vUv = uv;
-        vec3 p = position;
-        // ao rolar para longe, o retrato se curva levemente, como papel
-        p.z -= sin(uv.y * 3.14159) * uSaida * 0.25;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
-      }`,
-    fragmentShader: /* glsl */ `
-      uniform sampler2D tFoto;
-      uniform float uRevela;
-      uniform vec2 uMouse;
-      uniform float uVel;
-      uniform float uTempo;
-      uniform float uSaida;
-      uniform vec2 uTexel;
-      varying vec2 vUv;
-      ${GLSL_RUIDO}
-      void main() {
-        vec2 uv = vUv;
-        // varredura de entrada, de baixo para cima, com linhas que tremem
-        float frente = uRevela * 1.25 - 0.1;
-        float faixa = step(uv.y, frente);
-        float borda = smoothstep(0.035, 0.0, abs(uv.y - frente)) * step(0.0, uRevela) * (1.0 - step(1.0, uRevela));
-        float linha = step(0.5, fract(uv.y * 160.0));
-        uv.x += (h21(vec2(floor(uv.y * 90.0), floor(uTempo * 12.0))) - 0.5) * borda * 0.04;
-        // separação de cor quando o mouse corre
-        float sep = uVel * 0.012 + uSaida * 0.01;
-        vec4 c = texture2D(tFoto, uv);
-        float rr = texture2D(tFoto, uv + vec2(sep, 0.0)).r;
-        float bb = texture2D(tFoto, uv - vec2(sep, 0.0)).b;
-        vec3 cor = vec3(rr, c.g, bb);
-        float a = c.a;
-        // normal falsa a partir do alfa: luz de recorte do lado do cursor
-        float ax = texture2D(tFoto, uv + vec2(uTexel.x * 3.0, 0.0)).a - texture2D(tFoto, uv - vec2(uTexel.x * 3.0, 0.0)).a;
-        float ay = texture2D(tFoto, uv + vec2(0.0, uTexel.y * 3.0)).a - texture2D(tFoto, uv - vec2(0.0, uTexel.y * 3.0)).a;
-        vec2 n = -vec2(ax, ay);
-        vec2 l = normalize(uMouse - uv + 1e-4);
-        float recorte = max(dot(normalize(n + 1e-5), l), 0.0) * min(length(n), 0.6) * 1.6;
-        float perto = exp(-distance(uMouse, uv) * 3.2);
-        vec3 sodio = vec3(1.0, 0.70, 0.25);
-        cor *= 0.72 + perto * 0.55;
-        cor += sodio * recorte * (0.35 + perto * 0.8);
-        cor = mix(cor, cor * vec3(1.05, 0.92, 0.78), perto * 0.5);
-        // grão e linhas de varredura muito sutis
-        cor += (h21(uv * 900.0 + uTempo) - 0.5) * 0.035;
-        cor *= 0.97 + linha * 0.03;
-        cor += sodio * borda * 1.6;
-        float alfa = a * faixa + borda * a;
-        alfa *= 1.0 - uSaida * 0.85;
-        if (alfa < 0.01) discard;
-        gl_FragColor = vec4(cor, alfa);
-      }`,
-    transparent: true,
-    depthWrite: false,
-  })
-  const malha = new THREE.Mesh(new THREE.PlaneGeometry(1, 1, 1, 32), mat)
-  malha.renderOrder = 5
-  return malha
 }
 
 /** o retrato em partículas: espalhado como poeira de luz, se monta com a rolagem */
@@ -189,4 +111,3 @@ export function criarRetratoParticulas(imagem, { passo = 4 } = {}) {
   return { pontos, aspecto }
 }
 
-export { estado }

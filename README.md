@@ -6,7 +6,7 @@ Site pessoal bilíngue (português e inglês) feito com React e Vite. Apresenta 
 
 A paleta continua sendo uma cidade à noite sob luz de sódio, e a ideia continua sendo **a luz revela o código**. Na v2 essa cidade virou um lugar em 3D: um único canvas WebGL atrás da página, e a câmera viaja por ele conforme a rolagem.
 
-- **Abertura:** contagem real do carregamento com um filamento de sódio que esquenta e vira o horizonte. Atrás do nome, linhas reais do StudentOS e do Conferente flutuam no escuro; a luz do cursor revela as que estão perto. A foto, recortada, é iluminada pela mesma luz (luz de recorte do lado do cursor, separação de cor quando o mouse corre). O peso de cada letra do nome responde à distância do cursor.
+- **Abertura:** contagem real do carregamento com um filamento de sódio que esquenta e vira o horizonte. Atrás do nome, linhas reais do StudentOS e do Conferente flutuam no escuro; a luz do cursor revela as que estão perto. O peso de cada letra do nome responde à distância do cursor.
 - **Viagem:** entre os capítulos a câmera atravessa o campo de código; as linhas se esticam em rastros de luz.
 - **Sobre:** o retrato se monta a partir de milhares de partículas conforme a rolagem; o cursor empurra as partículas. A frase de destaque acende palavra por palavra.
 - **Habilidades:** mapa de evidências em 3D. Cada tecnologia é um ponto ligado por fios aos lugares onde foi usada, com pulsos de luz viajando pelos fios. Dá para girar arrastando; escolher uma tecnologia acende os fios dela.
@@ -17,7 +17,7 @@ A paleta continua sendo uma cidade à noite sob luz de sódio, e a ideia continu
 
 Tecnologias: React 19, Vite, Three.js (shaders GLSL próprios, pós-processamento com bloom), GSAP + ScrollTrigger + SplitText, Lenis (rolagem suave) e Web Audio.
 
-**Acessibilidade e desempenho:** tudo funciona por teclado e leitor de tela (as imagens e os textos reais continuam no HTML; o WebGL só desenha por cima). "Reduzir movimento" (do sistema ou no rodapé) desliga a rolagem suave, as cenas presas e as animações, e a trajetória vira uma lista. Sem WebGL, o site mostra as imagens normais. A qualidade 3D é escolhida pelo aparelho e pode ser trocada no rodapé (Alta ou Leve).
+**Acessibilidade e desempenho:** tudo funciona por teclado e leitor de tela (as capturas e os textos reais continuam no HTML; o WebGL só desenha por cima). "Reduzir movimento" (do sistema ou no rodapé) desliga a rolagem suave, as cenas presas e as animações, e a trajetória vira uma lista. Sem WebGL, o site mostra as imagens normais. A qualidade 3D é escolhida pelo aparelho e pode ser trocada no rodapé (Alta ou Leve).
 
 Publicado no Netlify (veja "Publicar no Netlify").
 
@@ -62,9 +62,9 @@ Todo texto traduzido segue o formato `{ pt: '...', en: '...' }`. Ao mudar um, mu
 
 ## Tarefas comuns
 
-### Trocar a foto
+### Trocar o retrato em partículas
 
-A foto fica em `public/images/davi-1090.webp` e `public/images/davi-545.webp`: recortada (fundo transparente), vertical, proporção 1:2. Para trocar, gere dois WebP com fundo transparente nesses tamanhos e substitua os arquivos. As partículas da seção Sobre são geradas a partir da versão menor.
+A foto não aparece no site: ela só serve de molde para as partículas da seção Sobre. O arquivo é `public/images/davi-545.webp`, recortado (fundo transparente), vertical, proporção 1:2. Para trocar, gere outro WebP com fundo transparente nesse tamanho e substitua o arquivo.
 
 ### Adicionar o currículo
 

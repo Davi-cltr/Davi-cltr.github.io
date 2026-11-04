@@ -1,6 +1,5 @@
 import { useLanguage } from '../i18n/LanguageProvider.jsx'
 import { profile } from '../data/profile.js'
-import { asset } from '../lib/asset.js'
 import { estado } from '../core/store.js'
 import { gsap, ScrollTrigger } from '../core/motion.js'
 import { embaralhar, revelarLinhas, useCena } from './efeitos.jsx'
@@ -78,9 +77,7 @@ export default function About() {
           </dl>
         </div>
         <div className="sobre__retrato">
-          <div className="sobre__moldura" data-gl="particulas">
-            <img src={asset('images/davi-545.webp')} width="545" height="1090" alt="" loading="lazy" />
-          </div>
+          <div className="sobre__moldura" data-gl="particulas" aria-hidden="true" />
           <span className="sobre__coord" aria-hidden="true">
             22.7°S · 47.3°W
           </span>
