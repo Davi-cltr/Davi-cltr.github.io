@@ -2,17 +2,22 @@
 
 Site pessoal bilíngue (português e inglês) feito com React e Vite. Apresenta meus projetos como estudos de caso, com capturas de tela reais, trechos do código e as decisões técnicas por trás de cada um.
 
-## O conceito: luz de sódio
+## O conceito: a cidade de código sob luz de sódio (v2)
 
-A paleta lembra uma cidade à noite sob luz de sódio, e o site inteiro gira em torno de uma ideia: **a luz revela o código**.
+A paleta continua sendo uma cidade à noite sob luz de sódio, e a ideia continua sendo **a luz revela o código**. Na v2 essa cidade virou um lugar em 3D: um único canvas WebGL atrás da página, e a câmera viaja por ele conforme a rolagem.
 
-- **Abertura:** por trás do nome há linhas reais do StudentOS e do Conferente, quase invisíveis. Uma luz âmbar nasce no cursor do título, acompanha o mouse e revela o código por onde passa. No celular, ela passeia sozinha.
-- **Habilidades:** um mapa de evidências. Cada tecnologia está ligada por fios ao trabalho ou projeto que comprova o uso, e escolher uma acende o caminho.
-- **Projetos:** capítulos com moldura de navegador, em que as abas são as capturas de tela. Em "Decisões técnicas", escolher uma decisão acende as linhas exatas do código real que a implementam.
-- **Trajetória:** trabalho e estudo na mesma linha do tempo, com a marca de "hoje" acesa e o futuro tracejado.
-- **Contato:** a luz volta como um horizonte no fim da página.
+- **Abertura:** contagem real do carregamento com um filamento de sódio que esquenta e vira o horizonte. Atrás do nome, linhas reais do StudentOS e do Conferente flutuam no escuro; a luz do cursor revela as que estão perto. A foto, recortada, é iluminada pela mesma luz (luz de recorte do lado do cursor, separação de cor quando o mouse corre). O peso de cada letra do nome responde à distância do cursor.
+- **Viagem:** entre os capítulos a câmera atravessa o campo de código; as linhas se esticam em rastros de luz.
+- **Sobre:** o retrato se monta a partir de milhares de partículas conforme a rolagem; o cursor empurra as partículas. A frase de destaque acende palavra por palavra.
+- **Habilidades:** mapa de evidências em 3D. Cada tecnologia é um ponto ligado por fios aos lugares onde foi usada, com pulsos de luz viajando pelos fios. Dá para girar arrastando; escolher uma tecnologia acende os fios dela.
+- **Projetos:** a moldura de navegador fica presa à tela enquanto a história passa ao lado, e cada bloco troca a captura. As capturas são desenhadas em WebGL: a troca vira uma dissolução que queima em sódio, e o cursor ondula a imagem. Nas decisões técnicas, as linhas do código real acendem em sequência.
+- **Trajetória:** uma avenida à noite, presa à rolagem. Cada poste é um mês: os do passado acendem quando a câmera chega neles, a linha de hoje atravessa a rua, e depois dela a rua ainda não foi feita.
+- **Contato:** a cidade inteira no horizonte, com janelas acesas; o título acende onde o cursor passa; copiar o e-mail solta faíscas.
+- **Detalhes:** cursor próprio com palavras de contexto, botões magnéticos, textos que se embaralham, índice lateral dos capítulos, barra de progresso, relógio de Americana, grão de filme e som opcional (o zumbido da cidade e das lâmpadas, um sopro que acompanha a velocidade da rolagem).
 
-Toda animação respeita a opção de reduzir movimento do sistema, tudo funciona por teclado, e o conteúdo aparece mesmo sem JavaScript de animação.
+Tecnologias: React 19, Vite, Three.js (shaders GLSL próprios, pós-processamento com bloom), GSAP + ScrollTrigger + SplitText, Lenis (rolagem suave) e Web Audio.
+
+**Acessibilidade e desempenho:** tudo funciona por teclado e leitor de tela (as imagens e os textos reais continuam no HTML; o WebGL só desenha por cima). "Reduzir movimento" (do sistema ou no rodapé) desliga a rolagem suave, as cenas presas e as animações, e a trajetória vira uma lista. Sem WebGL, o site mostra as imagens normais. A qualidade 3D é escolhida pelo aparelho e pode ser trocada no rodapé (Alta ou Leve).
 
 Publicado no Netlify (veja "Publicar no Netlify").
 
@@ -57,12 +62,9 @@ Todo texto traduzido segue o formato `{ pt: '...', en: '...' }`. Ao mudar um, mu
 
 ## Tarefas comuns
 
-### Adicionar a foto
+### Trocar a foto
 
-1. Salve a foto em `public/images/`, de preferência em WebP, vertical (proporção 4:5, por exemplo 960 × 1200 px).
-2. Em `src/data/profile.js`, troque `photo: null` por `photo: '/images/davi.webp'` (use o nome do seu arquivo).
-
-Enquanto não houver foto, o site mostra um monograma "DM" no mesmo espaço.
+A foto fica em `public/images/davi-1090.webp` e `public/images/davi-545.webp`: recortada (fundo transparente), vertical, proporção 1:2. Para trocar, gere dois WebP com fundo transparente nesses tamanhos e substitua os arquivos. As partículas da seção Sobre são geradas a partir da versão menor.
 
 ### Adicionar o currículo
 

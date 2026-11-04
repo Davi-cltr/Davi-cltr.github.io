@@ -22,7 +22,7 @@ export const profile = {
 
   // Foto: coloque o arquivo em public/images/ e troque null pelo caminho,
   // por exemplo: photo: '/images/davi.webp'. Proporção ideal 4:5 (retrato).
-  photo: null,
+  photo: '/images/davi-1090.webp',
 
   // Currículo: coloque o PDF em public/cv/ e troque null pelo caminho,
   // por exemplo: resume: '/cv/davi-motta-curriculo.pdf'.

@@ -1,204 +1,175 @@
 import { useEffect, useRef } from 'react'
 import { useLanguage } from '../i18n/LanguageProvider.jsx'
 import { profile } from '../data/profile.js'
-import { heroCode } from '../data/heroCode.js'
 import { asset } from '../lib/asset.js'
-import { hasFinePointer, prefersReducedMotion } from '../lib/motion.js'
+import { estado, ouvir } from '../core/store.js'
+import { gsap, rolarPara } from '../core/motion.js'
+import { embaralhar, useCena, useMagnetico } from './efeitos.jsx'
+import { ArrowIcon } from './ui.jsx'
 
-export function Photo() {
-  const { t } = useLanguage()
-  if (profile.photo) {
-    return (
-      <img
-        className="photo"
-        src={asset(profile.photo)}
-        alt={t('photo.alt')}
-        width="480"
-        height="600"
-        fetchPriority="high"
-      />
-    )
-  }
-  // Sem foto ainda: monograma no mesmo formato, para o layout não mudar depois.
+function Letras({ texto, className }) {
   return (
-    <div className="photo photo--empty" aria-hidden="true">
-      <span>DM</span>
-    </div>
-  )
-}
-
-// A luz de sódio: nasce no cursor âmbar do título e depois acompanha o mouse,
-// revelando o código real que fica quase invisível no fundo.
-// No toque, ela passeia devagar sozinha; com movimento reduzido, fica parada.
-function useSodiumLight(stageRef, anchorRef) {
-  useEffect(() => {
-    const stage = stageRef.current
-    const anchor = anchorRef.current
-    if (!stage || !anchor) return
-
-    const pos = { x: 0, y: 0 }
-    const target = { x: 0, y: 0 }
-    let following = false
-    let visible = true
-    let frame = 0
-    let start = performance.now()
-
-    const anchorPoint = () => {
-      const s = stage.getBoundingClientRect()
-      const a = anchor.getBoundingClientRect()
-      return { x: a.left - s.left + a.width / 2, y: a.top - s.top + a.height / 2 }
-    }
-    const paint = () => {
-      stage.style.setProperty('--lx', `${pos.x.toFixed(1)}px`)
-      stage.style.setProperty('--ly', `${pos.y.toFixed(1)}px`)
-    }
-    const place = () => {
-      const p = anchorPoint()
-      Object.assign(pos, p)
-      Object.assign(target, p)
-      paint()
-    }
-
-    place()
-    if (prefersReducedMotion()) {
-      window.addEventListener('resize', place)
-      return () => window.removeEventListener('resize', place)
-    }
-
-    const fine = hasFinePointer()
-    const tick = (now) => {
-      frame = 0
-      if (!visible) return
-      if (!fine) {
-        // Deriva lenta em torno do cursor do título (curva de Lissajous).
-        const a = anchorPoint()
-        const w = stage.clientWidth
-        const h = stage.clientHeight
-        const t = (now - start) / 1000
-        target.x = a.x + Math.sin(t * 0.35) * w * 0.28
-        target.y = a.y + Math.sin(t * 0.22 + 1.2) * h * 0.18
-      }
-      pos.x += (target.x - pos.x) * 0.09
-      pos.y += (target.y - pos.y) * 0.09
-      paint()
-      const settled = Math.abs(target.x - pos.x) < 0.3 && Math.abs(target.y - pos.y) < 0.3
-      if (!fine || !settled) frame = requestAnimationFrame(tick)
-    }
-    const kick = () => {
-      if (!frame) frame = requestAnimationFrame(tick)
-    }
-
-    const onMove = (e) => {
-      const s = stage.getBoundingClientRect()
-      following = true
-      target.x = e.clientX - s.left
-      target.y = e.clientY - s.top
-      kick()
-    }
-    const onLeave = () => {
-      following = false
-      Object.assign(target, anchorPoint())
-      kick()
-    }
-    const onResize = () => {
-      if (!following) Object.assign(target, anchorPoint())
-      kick()
-    }
-
-    const io = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting
-      if (visible) {
-        start = performance.now() - 2000
-        kick()
-      }
-    })
-    io.observe(stage)
-
-    if (fine) {
-      stage.addEventListener('pointermove', onMove)
-      stage.addEventListener('pointerleave', onLeave)
-    } else {
-      kick()
-    }
-    window.addEventListener('resize', onResize)
-
-    return () => {
-      io.disconnect()
-      cancelAnimationFrame(frame)
-      stage.removeEventListener('pointermove', onMove)
-      stage.removeEventListener('pointerleave', onLeave)
-      window.removeEventListener('resize', onResize)
-    }
-  }, [stageRef, anchorRef])
-}
-
-// Três colunas de código, cada uma recortada no próprio limite.
-const third = Math.ceil(heroCode.length / 3)
-const codeColumns = [0, 1, 2].map((i) => heroCode.slice(i * third, (i + 1) * third).join('\n'))
-
-function CodeLayer({ className }) {
-  return (
-    <div className={`hero__code-layer ${className}`}>
-      {codeColumns.map((text, i) => (
-        <pre key={i}>{text}</pre>
+    <span className={className} aria-hidden="true">
+      {[...texto].map((c, i) => (
+        <span className="letra" key={i}>
+          <span className="letra__in">{c}</span>
+        </span>
       ))}
-    </div>
+    </span>
   )
 }
 
 export default function Hero() {
-  const { t, pick } = useLanguage()
-  const stage = useRef(null)
-  const cursor = useRef(null)
-  useSodiumLight(stage, cursor)
+  const { t, pick, lang } = useLanguage()
+  const ola = useRef(null)
+  const papel = useRef(null)
+  const btn1 = useMagnetico(0.35)
+  const btn2 = useMagnetico(0.35)
 
-  const [first, ...rest] = profile.name.split(' ')
+  const raiz = useCena(
+    (el, reduzido) => {
+      const letras = el.querySelectorAll('.letra__in')
+      const resto = el.querySelectorAll('[data-hero-surge]')
+      const comecar = () => {
+        if (reduzido) return
+        const tl = gsap.timeline({ delay: 0.15 })
+        tl.fromTo(letras, { yPercent: 115, rotate: 8 }, { yPercent: 0, rotate: 0, duration: 1.4, ease: 'expo.out', stagger: 0.045 })
+          .from(resto, { y: 30, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: 0.08 }, 0.5)
+          .call(() => {
+            embaralhar(ola.current, t('hero.hello'), { duracao: 0.7 })
+            embaralhar(papel.current, pick(profile.role), { duracao: 1.2 })
+          }, null, 0.4)
+      }
+      if (!reduzido) gsap.set(letras, { yPercent: 115 })
+      if (estado.pronto) comecar()
+      const fora = ouvir((s) => {
+        if (s.pronto) {
+          fora()
+          comecar()
+        }
+      })
+
+      if (!reduzido) {
+        // ao rolar, o nome se abre e some, como luz que se espalha
+        gsap.to(el.querySelectorAll('.hero__nome .letra'), {
+          xPercent: (i) => (i - 4) * 18,
+          opacity: 0,
+          filter: 'blur(6px)',
+          ease: 'none',
+          stagger: 0.01,
+          scrollTrigger: { trigger: el, start: 'top top', end: 'bottom 20%', scrub: true },
+        })
+        gsap.to(el.querySelector('.hero__texto'), {
+          y: -120,
+          opacity: 0,
+          ease: 'none',
+          scrollTrigger: { trigger: el, start: '20% top', end: 'bottom top', scrub: true },
+        })
+        gsap.to(el.querySelector('.hero__foto'), {
+          y: 80,
+          ease: 'none',
+          scrollTrigger: { trigger: el, start: 'top top', end: 'bottom top', scrub: true },
+        })
+      }
+
+      // o peso de cada letra responde à distância do cursor
+      const todas = [...el.querySelectorAll('.hero__nome .letra__in')]
+      const peso = (e) => {
+        if (estado.reduzido || e.pointerType !== 'mouse') return
+        for (const l of todas) {
+          const r = l.getBoundingClientRect()
+          const d = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2))
+          const w = 300 + 500 * Math.exp(-(d * d) / 40000)
+          l.style.fontVariationSettings = `'wght' ${w.toFixed(0)}`
+        }
+      }
+      addEventListener('pointermove', peso, { passive: true })
+      return () => {
+        fora()
+        removeEventListener('pointermove', peso)
+      }
+    },
+    [lang],
+  )
 
   return (
-    <section className="hero" id="top" aria-labelledby="hero-name" ref={stage}>
-      <div className="hero__code" aria-hidden="true" translate="no">
-        <CodeLayer className="hero__code-dim" />
-        <CodeLayer className="hero__code-lit" />
-      </div>
-      <div className="hero__glow" aria-hidden="true" />
-
-      <div className="container hero__grid">
-        <div className="hero__text">
-          <p className="hero__role" data-intro style={{ '--d': 0 }}>
-            {pick(profile.role)}
+    <section className="hero" id="inicio" ref={raiz} aria-labelledby="hero-titulo">
+      <div className="hero__grade">
+        <div className="hero__texto">
+          <p className="hero__disponivel" data-hero-surge>
+            <span className="pulso" aria-hidden="true" />
+            {t('hero.available')}
           </p>
-          <h1 id="hero-name" className="hero__name">
-            <span className="hero__line">
-              <span data-intro style={{ '--d': 1 }}>
-                {first}
-              </span>
-            </span>
-            <span className="hero__line">
-              <span data-intro style={{ '--d': 2 }}>
-                {rest.join(' ')}
-              </span>
-            </span>
+          <p className="hero__ola" ref={ola}>
+            {t('hero.hello')}
+          </p>
+          <h1 className="hero__nome" id="hero-titulo">
+            <span className="visually-hidden">{profile.name}</span>
+            <Letras texto="Davi" className="hero__linha" />
+            <Letras texto="Motta" className="hero__linha hero__linha--2" />
           </h1>
-          <p className="hero__tagline" data-intro style={{ '--d': 4 }}>
-            {pick(profile.tagline)}
-            <span className="cursor" ref={cursor} aria-hidden="true" />
+          <p className="hero__papel" data-hero-surge>
+            <span ref={papel}>{pick(profile.role)}</span>
+            <span className="caret" aria-hidden="true" />
           </p>
-          <p className="hero__intro" data-intro style={{ '--d': 5 }}>
+          <p className="hero__frase" data-hero-surge>
+            {pick(profile.tagline)}
+          </p>
+          <p className="hero__intro" data-hero-surge>
             {pick(profile.intro)}
           </p>
-          <div className="hero__actions" data-intro style={{ '--d': 6 }}>
-            <a className="button button--primary" href="#projects">
-              {t('hero.projects')}
+          <div className="hero__acoes" data-hero-surge>
+            <a
+              ref={btn1}
+              className="botao botao--luz"
+              href="#projetos"
+              onClick={(e) => {
+                e.preventDefault()
+                rolarPara('#projetos')
+              }}
+            >
+              <span>{t('hero.projects')}</span>
+              <ArrowIcon />
             </a>
-            <a className="button" href="#contact">
-              {t('hero.contact')}
+            <a
+              ref={btn2}
+              className="botao"
+              href="#contato"
+              onClick={(e) => {
+                e.preventDefault()
+                rolarPara('#contato')
+              }}
+            >
+              <span>{t('hero.contact')}</span>
             </a>
           </div>
         </div>
-        <div className="hero__photo" data-intro style={{ '--d': 3 }}>
-          <Photo />
-        </div>
+        <figure className="hero__foto">
+          <img
+            data-gl="retrato"
+            src={asset('images/davi-1090.webp')}
+            srcSet={`${asset('images/davi-545.webp')} 545w, ${asset('images/davi-1090.webp')} 1090w`}
+            sizes="(min-width: 900px) 34vw, 70vw"
+            width="1090"
+            height="2180"
+            alt={t('photo.alt')}
+            fetchPriority="high"
+          />
+        </figure>
       </div>
+      <a
+        className="hero__rolar"
+        href="#sobre"
+        onClick={(e) => {
+          e.preventDefault()
+          rolarPara('#sobre')
+        }}
+      >
+        <span className="hero__rolar-linha" aria-hidden="true">
+          <i />
+        </span>
+        {t('hero.scroll')}
+      </a>
     </section>
   )
 }
